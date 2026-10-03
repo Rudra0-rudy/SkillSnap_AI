@@ -1,8 +1,6 @@
-<div align="center">
-
 # ⚡ SkillSnap AI
 
-**Find your skill gaps. Get your personalized career roadmap.**
+**Find your skill gaps. Get a personalized career roadmap.**
 
 An AI-powered career skill-gap analyzer built with Flask and open-weight **Gemma** models.
 
@@ -11,10 +9,9 @@ An AI-powered career skill-gap analyzer built with Flask and open-weight **Gemma
 ![Gemma](https://img.shields.io/badge/AI-Gemma%20(open--weight)-4285F4)
 ![Frontend](https://img.shields.io/badge/Frontend-HTML%20%7C%20CSS%20%7C%20JS-E34F26)
 ![No Database](https://img.shields.io/badge/Database-none-success)
+![License](https://img.shields.io/badge/License-MIT-green)
 
 [Quick Start](#-quick-start) · [Configuration](#️-configuration) · [API](#-api-reference) · [Deploy](#️-deploy-to-render) · [Troubleshooting](#️-troubleshooting)
-
-</div>
 
 ---
 
@@ -26,7 +23,7 @@ Choosing a career is easier when you know exactly what is missing. **SkillSnap A
 - which required skills you **already have** and which you are **missing**,
 - an AI-written **learning roadmap**, **project ideas**, and **interview topics** tailored to your gaps.
 
-Built for a one-day hackathon, so it stays simple, reliable, and easy to understand: **no database, no login, no build tools.**
+Built for a one-day hackathon, so it stays simple and easy to understand: **no database, no login, no build tools.**
 
 ## ✨ Features
 
@@ -34,23 +31,23 @@ Built for a one-day hackathon, so it stays simple, reliable, and easy to underst
 - 🔍 **Case-insensitive skill matching** (`python`, `Python`, and `PYTHON` count as the same skill)
 - 📊 **Deterministic readiness score** calculated in Python, never guessed by the AI
 - 🧠 **Personalized AI roadmap** with phases, projects, and interview prep
-- 🛡️ **Safe AI parsing**: extracts JSON even when the model adds extra text, and never crashes the server
+- 🛡️ **Safe AI parsing**: extracts JSON even when the model adds extra text, and returns a clean error instead of crashing
 - 🔌 **Switchable AI providers**: Google AI Studio (free Gemma), local Ollama, or any OpenAI-compatible API
-- 🚫 **Clean error messages**: no stack traces ever reach the browser
+- 🚫 **Clean error messages**: no stack traces reach the browser
 
 ## 🏗️ How It Works
 
 ```text
-┌──────────────┐   POST /api/analyze    ┌────────────────────────────┐
-│   Browser    │ ─────────────────────▶ │          Flask API         │
-│ HTML/CSS/JS  │                        │                            │
-└──────────────┘                        │ 1. Validate input          │
-        ▲                               │ 2. Match skills (Python)   │
-        │                               │ 3. Compute readiness %     │
-        │        JSON result            │ 4. Build prompt            │
-        └────────────────────────────── │ 5. Call AI model ──────────┼──▶ Gemma
-                                        │ 6. Parse + validate JSON   │   (Google AI Studio
-                                        └────────────────────────────┘    or Ollama)
+┌──────────────┐   POST /api/analyze   ┌────────────────────────────┐
+│   Browser    │ ────────────────────▶ │         Flask API          │
+│ HTML/CSS/JS  │                       │                            │
+└──────────────┘                       │ 1. Validate input          │
+       ▲                               │ 2. Match skills (Python)   │
+       │                               │ 3. Compute readiness %     │
+       │        JSON result            │ 4. Build prompt            │
+       └────────────────────────────── │ 5. Call AI model ──────────┼──▶ Gemma
+                                       │ 6. Parse + validate JSON   │   (Google AI Studio
+                                       └────────────────────────────┘    or Ollama)
 ```
 
 The AI is used only for what it is good at: the **explanations and roadmap**. Everything measurable (matching, missing skills, readiness) is calculated by plain Python, so the numbers are always correct.
@@ -78,11 +75,12 @@ Example: 5 of 9 required skills → `5 / 9 × 100 = 55.56` → **56%**
 ## 📁 Project Structure
 
 ```text
-skillsnap-ai/
+SkillSnap_AI/
 ├── app.py                  # Flask app and routes
 ├── render.yaml             # One-click Render deployment config
 ├── requirements.txt
 ├── .env.example            # Copy to .env and fill in
+├── LICENSE
 ├── data/
 │   └── career_roles.py     # Roles and their expected skills
 ├── services/
@@ -101,8 +99,8 @@ skillsnap-ai/
 ### 1. Clone and create a virtual environment
 
 ```bash
-git clone https://github.com/<your-username>/skillsnap-ai.git
-cd skillsnap-ai
+git clone https://github.com/Rudra0-rudy/SkillSnap_AI.git
+cd SkillSnap_AI
 python -m venv env
 ```
 
@@ -179,17 +177,25 @@ All settings live in `.env`. Pick **one** provider.
 | `gemma-3-27b-it` | Fallback if the Gemma 4 names are unavailable |
 | `gemma-3-12b-it` | Faster and lighter |
 
-Use the name **without** the `models/` prefix. To see which models your key can use:
+Use the model name **without** the `models/` prefix. To see which models your key can use:
 
 ```powershell
+# Windows PowerShell
 $key = "YOUR_KEY"
-(Invoke-RestMethod "https://generativelanguage.googleapis.com/v1beta/models?key=$key").models | Where-Object { $_.name -like "*gemma*" } | ForEach-Object { $_.name }
+(Invoke-RestMethod "https://generativelanguage.googleapis.com/v1beta/models?key=$key").models |
+  Where-Object { $_.name -like "*gemma*" } |
+  ForEach-Object { $_.name }
+```
+
+```bash
+# macOS / Linux
+curl "https://generativelanguage.googleapis.com/v1beta/models?key=YOUR_KEY" | grep -i '"name".*gemma'
 ```
 
 </details>
 
 <details>
-<summary><b>Run fully offline with Ollama instead</b></summary>
+<summary><b>Run fully offline with Ollama</b></summary>
 
 ```bash
 ollama pull gemma3:4b
@@ -213,8 +219,10 @@ OLLAMA_MODEL=gemma3:4b
 LLM_PROVIDER=api
 LLM_BASE_URL=https://api.groq.com/openai/v1
 LLM_API_KEY=your_key
-LLM_MODEL=<a model from the provider's list>
+LLM_MODEL=your_model_name
 ```
+
+Set `LLM_MODEL` to a model your chosen provider offers.
 
 </details>
 
@@ -285,7 +293,8 @@ $body = @{
   skills = @("python","NumPy","Pandas","SQL","Machine Learning")
 } | ConvertTo-Json
 
-Invoke-RestMethod -Method Post -Uri http://localhost:5000/api/analyze -ContentType "application/json" -Body $body | ConvertTo-Json -Depth 10
+Invoke-RestMethod -Method Post -Uri http://localhost:5000/api/analyze `
+  -ContentType "application/json" -Body $body | ConvertTo-Json -Depth 10
 ```
 
 ```bash
@@ -351,7 +360,7 @@ Good first contributions: new career roles in `data/career_roles.py`, better pro
 
 ## 📄 License
 
-Released under the MIT License. Add a `LICENSE` file to your repository to make it official.
+Released under the [MIT License](LICENSE).
 
 ## 🙏 Acknowledgements
 
@@ -362,9 +371,4 @@ Released under the MIT License. Add a `LICENSE` file to your repository to make 
 
 ---
 
-<div align="center">
-
 Built with ☕ for a hackathon. If SkillSnap AI helped you, give it a ⭐
-
-</div>#   S k i l l S n a p _ A I  
- 
