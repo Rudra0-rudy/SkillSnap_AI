@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#f4f6f2">
+	<title>SkillSnap AI | Career Readiness</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+	<script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</head>
+<body>
+	<header class="site-header">
+		<a class="brand" href="#top" aria-label="SkillSnap AI home">
+			<span class="brand-mark" aria-hidden="true">S<span>/</span></span>
+			<span>SkillSnap <strong>AI</strong></span>
+		</a>
+		<span class="header-note">A clearer next step</span>
+	</header>
+
+	<main id="top">
+		<section class="hero" aria-labelledby="hero-title">
+			<div class="hero-copy">
+				<p class="eyebrow"><span class="eyebrow-dot"></span> YOUR CAREER, IN FOCUS</p>
+				<h1 id="hero-title">Find your skill gaps.<br><span>Get your roadmap.</span></h1>
+				<p class="hero-description">Choose the role you want. We’ll map what you know to what comes next.</p>
+			</div>
+			<div class="hero-stamp" aria-hidden="true">
+				<span class="stamp-ring">FIELD<br>NOTES</span>
+				<span class="stamp-caption">01 / CAREER READINESS</span>
+			</div>
+		</section>
+
+		<div class="page-content">
+			<section class="workspace" id="analyzer" aria-labelledby="form-title">
+				<div class="section-heading">
+					<div>
+						<p class="eyebrow">START WITH YOUR SKILLS</p>
+						<h2 id="form-title">Build your snapshot</h2>
+					</div>
+					<span class="step-mark" aria-hidden="true">01</span>
+				</div>
+
+				<div class="error-banner" id="error-banner" role="alert" aria-live="assertive" hidden>
+					<p id="error-message"></p>
+					<button class="icon-button error-dismiss" id="dismiss-error" type="button" aria-label="Dismiss error">×</button>
+				</div>
+
+				<form id="analyze-form" novalidate>
+					<div class="form-field">
+						<label for="target-role">Target career role</label>
+						<select id="target-role" name="target_role" required disabled>
+							<option value="">Loading roles...</option>
+						</select>
+						<p class="field-hint" id="roles-status" aria-live="polite">Getting the role list ready...</p>
+					</div>
+
+					<div class="form-field skills-field">
+						<label for="skill-input">Skills you already have</label>
+						<div class="skill-entry" id="skill-entry">
+							<input id="skill-input" name="skill" type="text" autocomplete="off" placeholder="Try Python, SQL, or UX research" aria-describedby="skill-help" disabled>
+							<button class="add-button" id="add-skill" type="button" aria-label="Add skill" disabled>+</button>
+						</div>
+						<p class="field-hint" id="skill-help">Press Enter or type a comma to add each skill. Paste a list to add several.</p>
+						<div class="chip-list input-chips" id="skill-chips" aria-label="Your selected skills" role="list"></div>
+					</div>
+
+					<div class="examples" aria-label="Example skills">
+						<span>QUICK ADD</span>
+						<button type="button" class="example-chip" data-skill="Python" disabled>Python <span>+</span></button>
+						<button type="button" class="example-chip" data-skill="SQL" disabled>SQL <span>+</span></button>
+						<button type="button" class="example-chip" data-skill="Git" disabled>Git <span>+</span></button>
+					</div>
+
+					<div class="form-footer">
+						<span class="privacy-note"><span aria-hidden="true">↳</span> Your skills are only used for this snapshot.</span>
+						<button class="primary-button" id="analyze-button" type="submit" disabled>
+							<span>Analyze my skills</span><span class="button-arrow" aria-hidden="true">↗</span>
+						</button>
+					</div>
+				</form>
+
+				<div class="loading-panel" id="loading-panel" aria-live="polite" aria-atomic="true" hidden>
+					<span class="loader" aria-hidden="true"></span>
+					<div><strong id="loading-message">Comparing your skills...</strong><p>This can take up to a minute the first time.</p></div>
+				</div>
+			</section>
+
+			<section class="results" id="results" aria-labelledby="results-title" hidden>
+				<div class="results-topline">
+					<div>
+						<p class="eyebrow">YOUR CAREER SNAPSHOT</p>
+						<h2 id="results-title">Your next steps</h2>
+						<p class="results-role" id="results-role"></p>
+					</div>
+					<button class="text-button" id="analyze-again" type="button"><span aria-hidden="true">↶</span> Analyze again</button>
+				</div>
+
+				<div class="overview-grid">
+					<article class="score-panel">
+						<div class="score-copy">
+							<p class="eyebrow">READINESS SCORE</p>
+							<p class="score-caption" id="score-caption">A strong start</p>
+						</div>
+						<div class="score-ring" id="score-ring" role="img" aria-label="Readiness score">
+							<svg viewBox="0 0 112 112" aria-hidden="true">
+								<circle class="ring-track" cx="56" cy="56" r="46"></circle>
+								<circle class="ring-value" id="ring-value" cx="56" cy="56" r="46"></circle>
+							</svg>
+							<span class="score-number" id="score-number">0%</span>
+						</div>
+					</article>
+
+					<article class="comparison-panel">
+						<div class="comparison-group">
+							<div class="comparison-heading"><h3>Matched skills</h3><span class="count-badge" id="matched-count">0</span></div>
+							<div class="chip-list result-chips matched-chips" id="matched-skills"></div>
+						</div>
+						<div class="comparison-divider"></div>
+						<div class="comparison-group">
+							<div class="comparison-heading"><h3>Skills to build</h3><span class="count-badge missing-count" id="missing-count">0</span></div>
+							<div class="chip-list result-chips missing-chips" id="missing-skills"></div>
+							<p class="celebration" id="nothing-missing" hidden>All required skills covered. That’s worth celebrating.</p>
+						</div>
+					</article>
+				</div>
+
+				<article class="summary-panel content-panel">
+					<p class="eyebrow">THE OVERVIEW</p>
+					<p class="career-summary" id="career-summary"></p>
+				</article>
+
+				<div class="analysis-grid">
+					<article class="content-panel analysis-panel">
+						<p class="eyebrow">SKILL ANALYSIS</p>
+						<div class="analysis-block">
+							<h3><span class="analysis-icon strength-icon" aria-hidden="true">+</span> Your strengths</h3>
+							<ul class="clean-list" id="strengths-list"></ul>
+						</div>
+						<div class="analysis-block">
+							<h3><span class="analysis-icon gap-icon" aria-hidden="true">↗</span> Skills to develop</h3>
+							<ul class="clean-list" id="missing-explanations"></ul>
+						</div>
+						<div class="analysis-block priority-block">
+							<h3><span class="analysis-icon priority-icon" aria-hidden="true">!</span> Prioritize these</h3>
+							<ol class="priority-list" id="priority-skills"></ol>
+						</div>
+					</article>
+
+					<article class="content-panel roadmap-panel">
+						<div class="panel-heading">
+							<div><p class="eyebrow">A PRACTICAL PLAN</p><h2>Learning roadmap</h2></div>
+							<span class="step-mark" aria-hidden="true">02</span>
+						</div>
+						<div class="roadmap-list" id="roadmap-list"></div>
+					</article>
+				</div>
+
+				<div class="suggestions-grid">
+					<article class="content-panel suggestion-panel">
+						<p class="eyebrow">LEARN BY MAKING</p>
+						<h2>Suggested projects</h2>
+						<ul class="project-list" id="projects-list"></ul>
+					</article>
+					<article class="content-panel suggestion-panel interview-panel">
+						<p class="eyebrow">WALK IN PREPARED</p>
+						<h2>Interview prep</h2>
+						<ul class="interview-list" id="interview-topics"></ul>
+					</article>
+				</div>
+
+				<div class="bottom-action"><button class="primary-button" id="bottom-analyze-again" type="button"><span>Analyze again</span><span class="button-arrow" aria-hidden="true">↗</span></button></div>
+			</section>
+
+			<footer class="site-footer"><span>SKILLSNAP AI</span><span>Small steps. Sharper direction.</span></footer>
+		</div>
+	</main>
+</body>
+</html>
