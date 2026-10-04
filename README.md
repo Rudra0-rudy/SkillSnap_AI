@@ -311,8 +311,15 @@ The repo includes a `render.yaml`, so deployment takes a few minutes on Render's
 1. Push this project to GitHub (make sure `.env` is **not** included).
 2. Sign in at [dashboard.render.com](https://dashboard.render.com) with GitHub.
 3. Click **New → Blueprint** and select your repository.
-4. Paste your `LLM_API_KEY` when Render asks for it.
+4. Set `LLM_API_KEY` to your Google AI Studio API key when Render prompts for it.
 5. Click **Deploy** and open the URL Render gives you.
+
+The Blueprint installs `requirements.txt` and starts the Flask app with Gunicorn.
+For an existing Render service, set the same start command (`gunicorn app:app`)
+and configure `LLM_PROVIDER=google`, `LLM_MODEL=gemma-4-26b-a4b-it`, and
+`LLM_API_KEY` in the service's environment settings. A local `.env` file is not
+uploaded or read from Render; environment variables must be configured in the
+Render dashboard.
 
 **Good to know**
 
@@ -324,6 +331,7 @@ The repo includes a `render.yaml`, so deployment takes a few minutes on Render's
 
 | Problem | Fix |
 |---|---|
+| `Analysis failed. Please try again.` | Check the Render service logs for deployment or server errors. Confirm the service uses `gunicorn app:app` and has `LLM_PROVIDER`, `LLM_MODEL`, and `LLM_API_KEY` configured in its environment settings. |
 | `AI service is unavailable. Make sure Ollama is running.` | The app is in Ollama mode. Check that `.env` exists in the project root and contains `LLM_PROVIDER=google`, then restart Flask. |
 | `AI is not configured. Set LLM_API_KEY and LLM_MODEL` | One of those values is empty in `.env`. |
 | `AI provider rejected the API key` | The key is wrong or was deleted. Create a new one in AI Studio. |

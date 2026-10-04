@@ -88,6 +88,7 @@ def analyze():
     except AIInvalidResponse:
         return error("AI returned an invalid response", 502)
     except Exception:
+        app.logger.exception("Unexpected error while analyzing skills")
         return error("Something went wrong while analyzing skills", 500)
 
     return jsonify({

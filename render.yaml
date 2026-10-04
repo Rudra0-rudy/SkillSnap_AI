@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: skillsnap-ai
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: LLM_PROVIDER
+        value: google
+      - key: LLM_MODEL
+        value: gemma-4-26b-a4b-it
+      - key: LLM_API_KEY
+        sync: false
